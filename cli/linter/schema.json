@@ -547,6 +547,9 @@
         "enable_strict_routes": {
           "type": "boolean"
         },
+        "enable_regexp_cache": {
+          "type": "boolean"
+        },
         "flush_interval": {
           "type": "integer"
         },
