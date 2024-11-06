@@ -108,6 +108,7 @@ func (e *ErrorHandler) HandleError(w http.ResponseWriter, r *http.Request, errMs
 			templateExtension = "json"
 			contentType = header.ApplicationJSON
 		}
+		preserveCustomHeader(w, r)
 
 		w.Header().Set(header.ContentType, contentType)
 		response.Header = http.Header{}
@@ -313,4 +314,10 @@ func (e *ErrorHandler) HandleError(w http.ResponseWriter, r *http.Request, errMs
 	}
 	// Report in health check
 	reportHealthValue(e.Spec, BlockedRequestLog, "-1")
+}
+
+func preserveCustomHeader(w http.ResponseWriter, r *http.Request) {
+	const headerName = "Unique-Id"
+	uniqueIdHeaderValue := r.Header.Get(headerName)
+	w.Header().Set(headerName, uniqueIdHeaderValue)
 }
