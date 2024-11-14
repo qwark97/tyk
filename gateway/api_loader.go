@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -717,10 +718,21 @@ func (h *explicitRouteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	if r.URL.Path == h.prefix || strings.HasPrefix(r.URL.Path, h.prefix+"/") {
 		h.handler.ServeHTTP(w, r)
 		return
+	} else {
+		notFound(w, r)
 	}
+}
+
+func notFound(w http.ResponseWriter, r *http.Request) {
+	preserveCustomHeader(w, r)
+	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusNotFound)
-	_, _ = fmt.Fprint(w, http.StatusText(http.StatusNotFound))
+	json.NewEncoder(w).Encode(map[string]any{
+		"status":  http.StatusNotFound,
+		"code":    "NOT_FOUND",
+		"message": "A specified resource is not found",
+	})
 }
 
 func explicitRouteSubpaths(prefix string, handler http.Handler, enabled bool) http.Handler {
