@@ -216,8 +216,7 @@ func (m *proxyMux) handle404(w http.ResponseWriter, r *http.Request) {
 			Error(http.StatusText(http.StatusNotFound))
 	}
 
-	w.WriteHeader(http.StatusNotFound)
-	_, _ = fmt.Fprint(w, http.StatusText(http.StatusNotFound))
+	notFound(w, r)
 }
 
 func (m *proxyMux) addTCPService(spec *APISpec, modifier *tcp.Modifier, gw *Gateway) {
